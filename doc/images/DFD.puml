@@ -1,0 +1,64 @@
+@startuml
+title Flujo de Ejecución Diario Optimizado: Gemini Vuln Mitigator
+
+skinparam maxMessageSize 150
+autonumber
+
+participant "Cron Job\n(Planificador)" as Cron
+participant "main.py\n(Controlador)" as Main
+database "Caché Local\n(SQLite/JSON)" as Cache
+participant "scanner.py\n(Extractor)" as Scanner
+database "API NVD/OSV\n(Fuentes)" as NVD
+participant "analyzer.py\n(Motor IA)" as Analyzer
+participant "config.py\n(Contexto)" as Config
+database "API Gemini\n(LLM)" as Gemini
+participant "reporter.py\n(Notificador)" as Reporter
+actor "Equipo Técnico\n(Destinatarios)" as Usuario
+
+Cron -> Main: Iniciar ejecución diaria
+activate Main
+
+Main -> Cache: Cargar IDs de CVEs ya procesados
+activate Cache
+Cache --> Main: Retornar lista de IDs históricos
+deactivate Cache
+
+Main -> Scanner: obtener_cves_recientes()
+activate Scanner
+Scanner -> NVD: Consultar CVEs (con Exponential Backoff)
+NVD --> Scanner: Retornar CVEs
+Scanner -> Scanner: Filtrar por severidad (CVSS >= 7.0)
+Scanner --> Main: Retornar CVEs brutas
+deactivate Scanner
+
+Main -> Main: Descartar CVEs que ya están en Caché (Memoria)
+
+Main -> Analyzer: evaluar_asincrono(cves_nuevas)
+activate Analyzer
+Analyzer -> Config: cargar_stack_tecnologico()
+Config --> Analyzer: Retornar perfil de la empresa
+par Procesamiento Asíncrono y Paralelo
+    loop Por cada CVE nueva
+        Analyzer -> Gemini: Llamar API (con manejo de límite 429)
+        Gemini --> Analyzer: Retornar evaluación estructurada (JSON)
+    end
+end
+Analyzer --> Main: Retornar lista de CVEs evaluadas
+deactivate Analyzer
+
+Main -> Reporter: publicar_reporte(cves_evaluadas)
+activate Reporter
+Reporter -> Reporter: Descartar CVEs que no afectan el stack
+Reporter -> Reporter: Formatear a Markdown
+Reporter -> Usuario: Enviar notificación
+deactivate Reporter
+
+Main -> Cache: Guardar IDs de las nuevas CVEs procesadas hoy
+activate Cache
+Cache --> Main: Confirmar escritura
+deactivate Cache
+
+Main --> Cron: Finalizar ejecución
+deactivate Main
+
+@enduml
