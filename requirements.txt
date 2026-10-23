@@ -1,8 +1,11 @@
-# Cliente HTTP robusto para scanner.py
-requests>=2.31.0
-
-# Tipado para requests (buenas prácticas de análisis estático)
-types-requests>=2.31.0
-
-# Framework de pruebas unitarias
-pytest>=8.0.0
+certifi==2026.10.23
+charset-normalizer==3.5.2
+idna==3.20
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+Pygments==2.21.0
+pytest==9.1.1
+requests==2.34.2
+types-requests==2.33.0.20261006
+urllib3==2.8.0
