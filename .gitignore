@@ -1,0 +1,29 @@
+# Entorno virtual
+.venv/
+venv/
+ENV/
+env/
+
+# Archivos de caché y bytecode de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configuración y variables de entorno locales
+.env
+.env.*
+!.env.example
+
+# Archivos generados por pruebas
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Caché de ejecución local del proyecto (memoria histórica de CVEs)
+data/cache.json
+
+# Archivos de sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
