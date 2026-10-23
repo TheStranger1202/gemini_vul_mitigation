@@ -6,7 +6,12 @@ El sistema sigue un flujo de extracción local y consulta externa determinista, 
 2. **`scanner.py` (Extractor OSV):** Realiza consultas HTTP POST a la API de `osv.dev/v1/query` utilizando el ecosistema y la versión del paquete.
 3. **`auditor.py` (Lógica y Cruce):** Evalúa el JSON de respuesta. Si existe el campo `fixed`, extrae la versión segura. Si no, lo clasifica como Zero-Day.
 4. **`reporter.py` (Notificador):** Transforma el veredicto en instrucciones de actualización accionables o genera plantillas de *prompts* para análisis manual.
+## Códigos de Salida (Exit Codes)
+El controlador `main.py` devolverá códigos de salida estándar del sistema operativo para facilitar su integración en pipelines de CI/CD:
 
+* **`Exit Code 0` (Éxito):** Ejecución finalizada correctamente. No se encontraron vulnerabilidades nuevas, o las encontradas fueron procesadas y reportadas con éxito.
+* **`Exit Code 1` (Alerta de Seguridad):** Ejecución exitosa, pero se detectó al menos una vulnerabilidad Zero-Day (sin parche). Útil para hacer fallar un pipeline (Build) de forma preventiva.
+* **`Exit Code 2` (Falla de Infraestructura):** Error irrecuperable. Ocurre si el archivo `inventory.json` está corrupto, o si la API de OSV.dev no responde tras agotar todos los intentos de *Backoff*.
 ## Diagrama de Flujo (PlantUML)
 
 ```plantuml
