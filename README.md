@@ -44,3 +44,50 @@ Las herramientas tradicionales de ciberseguridad basadas puramente en LLMs sufre
 ├── pytest.ini                # Configuración del entorno de pruebas
 ├── README.md
 └── requirements.txt          # Dependencias fijadas (Lockfile)
+```
+
+---
+
+## 🚀 Inicio Rápido
+
+### 1. Requisitos Previos
+* Python 3.10 o superior.
+* Entorno virtual de Python (`venv`).
+
+### 2. Instalación
+```bash
+# Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
+cd gemini_vul_mitigation
+
+# Crear y activar el entorno virtual
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Instalar dependencias exactas
+pip install -r requirements.txt
+```
+
+### 3. Ejecución de Pruebas Unitarias
+```bash
+pytest tests/
+```
+
+### 4. Ejecución del Escáner
+```bash
+python main.py
+```
+
+---
+
+## ⚙️ Códigos de Salida para CI/CD
+
+El script `main.py` retorna códigos de salida estándar para integrarse en pipelines automatizados:
+
+| Código | Significado | Acción recomendada en Pipeline |
+| :---: | :--- | :--- |
+| `0` | **Éxito:** Sin vulnerabilidades o todas cuentan con parche reportado. | Permitir despliegue (Build Success). |
+| `1` | **Alerta Crítica:** Se detectó al menos un Zero-Day activo sin parche. | Detener despliegue / Notificar al equipo de seguridad. |
+| `2` | **Fallo Operativo:** Inventario malformado o error irrecuperable de red. | Marcar fallo de infraestructura en el pipeline. |
+
+Para instrucciones sobre cómo configurar el inventario corporativo real, depurar la caché o integrar nuevas bases de datos de vulnerabilidades, consulta el [Manual de Operación y Extensibilidad](docs/manual_de_uso.md).
