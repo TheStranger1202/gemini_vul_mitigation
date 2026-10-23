@@ -1,9 +1,46 @@
-# OSV Threat Auditor (Zero-Cost Vuln Sentinel)
+# OSV Threat Auditor
 
-Motor de auditoría determinista que analiza dependencias del proyecto contra la base de datos de Open Source Vulnerabilities (OSV.dev). Diseñado para proporcionar Inteligencia de Amenazas Accionable sin depender de APIs de terceros de pago.
+> **Auditor determinista de dependencias con mitigación híbrida y costo cero.**  
+> Diseñado para identificar vulnerabilidades confirmadas en entornos de producción y generar planes de remediación accionables sin incurrir en costos de tokens de IA.
 
-## Valor de Negocio y Ventajas
-* **Costo Cero ($0):** Utiliza bases de datos públicas y gratuitas, eliminando la necesidad de tokens de IA para el análisis estándar.
-* **Privacidad Absoluta:** El inventario de software y las vulnerabilidades detectadas nunca se envían a LLMs de terceros.
-* **Cero Falsos Positivos:** El análisis es 100% determinista basado en el cruce de versiones exactas, eliminando las alucinaciones de IA.
-* **Mitigación Híbrida:** Genera comandos de actualización directos para vulnerabilidades parcheadas, y elabora *prompts* pre-cargados con contexto técnico para asistir en la mitigación de Zero-Days.
+---
+
+## 🎯 Propuesta de Valor y Arquitectura
+
+Las herramientas tradicionales de ciberseguridad basadas puramente en LLMs sufren de alucinaciones, cuotas de API costosas y exposición de datos privados. Por otro lado, los escáneres estáticos tradicionales reportan falsos positivos sin contextualizar el ciclo de vida del software.
+
+**OSV Threat Auditor** resuelve este problema mediante un enfoque híbrido:
+* **Costo Cero ($0):** Utiliza la infraestructura pública y gratuita de **OSV.dev** (mantenida por Google y la OpenSSF).
+* **Determinismo Matemático:** Cruza directamente las versiones en uso contra rangos de parches oficiales (`fixed`), garantizando cero alucinaciones.
+* **Mitigación Accionable:** Genera de forma instantánea el comando o la versión exacta a la cual actualizar la librería.
+* **Asistencia Híbrida para Zero-Days:** Si una vulnerabilidad no cuenta con un parche disponible en el mercado, el motor genera un *prompt* técnico preconfigurado para consultar un LLM de confianza sin requerir integración con APIs de pago.
+* **Prevención de Fatiga de Alertas:** Incorpora una caché de estado local para notificar cada CVE una única vez.
+* **Paradigma Funcional Puro:** Desarrollado bajo principios de inmutabilidad, funciones puras y cero dependencias de Programación Orientada a Objetos (OOP).
+
+---
+
+## 📂 Estructura del Repositorio
+
+```text
+.
+├── data/
+│   ├── inventory.json        # Inventario de componentes auditados
+│   └── cache.json            # Histórico de vulnerabilidades procesadas (ignorado en Git)
+├── docs/
+│   ├── architecture.md       # Diagramas y flujos de datos
+│   ├── manual_de_uso.md      # Manual operativo y guía de extensibilidad
+│   ├── data_schemas.md       # Contratos JSON
+│   └── testing.md            # Estrategia TDD
+├── src/
+│   ├── __init__.py
+│   ├── auditor.py            # Motor de clasificación y cruce de versiones
+│   ├── config.py             # Configuración central y validación funcional
+│   ├── reporter.py           # Formateo de Markdown y generación de prompts
+│   └── scanner.py            # Cliente HTTP con Exponential Backoff
+├── tests/
+│   └── test_auditor.py       # Pruebas unitarias
+├── .gitignore
+├── main.py                   # Orquestador y punto de entrada CLI
+├── pytest.ini                # Configuración del entorno de pruebas
+├── README.md
+└── requirements.txt          # Dependencias fijadas (Lockfile)
